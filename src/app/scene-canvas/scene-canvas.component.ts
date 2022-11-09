@@ -12,7 +12,7 @@ export class SceneCanvasComponent implements OnInit {
   buffers: any
 
   c = 0.5
-  dt = 1.0 / 120
+  dt = 1.0 / 30
 
   position?: {x: number, y: number}
   velocity: {x: number, y: number} =  {x: 0, y: 0}
