@@ -11,7 +11,7 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
 
-  c = 0.7
+  c = 0.5
   dt = 1.0 / 120
 
   position?: {x: number, y: number}
@@ -69,6 +69,7 @@ export class SceneCanvasComponent implements OnInit {
         width: gl.getUniformLocation(shaderProgram, 'width'),
         height: gl.getUniformLocation(shaderProgram, 'height'),
         c: gl.getUniformLocation(shaderProgram, 'c'),
+        dt: gl.getUniformLocation(shaderProgram, 'dt'),
         positions: gl.getUniformLocation(shaderProgram, 'positions'),
         velocities: gl.getUniformLocation(shaderProgram, 'velocities'),
         accelerations: gl.getUniformLocation(shaderProgram, 'accelerations'),
@@ -90,21 +91,28 @@ export class SceneCanvasComponent implements OnInit {
     }
     resizeCanvas()
 
+    var time = new Date().getTime()
     var t = 0
     var render = () => {
+      if ((new Date().getTime() - time) / 1000 < this.dt) {
+        requestAnimationFrame(render)
+        return;
+      }
+      time = new Date().getTime()
+      
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const f = 0.9
+      const f = 0.8
       this.position = {
         x: .1 * Math.cos(2 * Math.PI * f * t) + 1,
-        y: 0. * Math.sin(2 * Math.PI * f * t) + 1
+        y: .1 * Math.sin(2 * Math.PI * f * t) + 1
       }
+      t += this.dt
       // this.position = {
       //   x: 1,
       //   y: Math.floor(Math.min(0.4*t, 1)) * 2
       // }
-      t += this.dt
       const scale = 0.5
       if (this.position != undefined) {
         var n = this.positions.length
@@ -116,7 +124,7 @@ export class SceneCanvasComponent implements OnInit {
           if (n >= 3) {
             var dvx = this.velocity.x - this.velocities[n - 2]
             var dvy = this.velocity.y - this.velocities[n - 1]
-            this.acceleration.x = dvx / this.dt * (scale * scale)
+            this.acceleration.x = dvx / this.dt * (scale * scale) 
             this.acceleration.y = dvy / this.dt * (scale * scale)
           }
         }
@@ -165,6 +173,7 @@ export class SceneCanvasComponent implements OnInit {
     gl.uniform1f(programInfo.uniformLocations.width, gl.canvas.width)
     gl.uniform1f(programInfo.uniformLocations.height, gl.canvas.height)
     gl.uniform1f(programInfo.uniformLocations.c, this.c)
+    gl.uniform1f(programInfo.uniformLocations.dt, this.dt)
     gl.uniform2fv(programInfo.uniformLocations.positions, this.positions)
     gl.uniform2fv(programInfo.uniformLocations.velocities, this.velocities)
     gl.uniform2fv(programInfo.uniformLocations.accelerations, this.accelerations)
