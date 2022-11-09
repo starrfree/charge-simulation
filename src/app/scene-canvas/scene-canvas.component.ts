@@ -103,10 +103,10 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const f = 0.8
+      const f = 2
       this.position = {
-        x: .1 * Math.cos(2 * Math.PI * f * t) + 1,
-        y: .1 * Math.sin(2 * Math.PI * f * t) + 1
+        x: .0 * Math.cos(2 * Math.PI * f * t) + 1,
+        y: .02 * Math.sin(2 * Math.PI * f * t) + 1
       }
       t += this.dt
       // this.position = {
@@ -119,7 +119,7 @@ export class SceneCanvasComponent implements OnInit {
         if (n >= 2) {
           var dx = this.position.x - this.positions[n - 2]
           var dy = this.position.y - this.positions[n - 1]
-          this.velocity.x = dx / this.dt * scale
+          this.velocity.x = dx / this.dt * scale + 0.4
           this.velocity.y = dy / this.dt * scale
           if (n >= 3) {
             var dvx = this.velocity.x - this.velocities[n - 2]
