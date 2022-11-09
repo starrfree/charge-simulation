@@ -11,6 +11,17 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
 
+  c = 0.7
+  dt = 1.0 / 120
+
+  position?: {x: number, y: number}
+  velocity: {x: number, y: number} =  {x: 0, y: 0}
+  acceleration: {x: number, y: number} =  {x: 0, y: 0}
+
+  positions: number[] = []
+  velocities: number[] = []
+  accelerations: number[] = []
+
   constructor(private shaderService: ShaderService) {
   }
 
@@ -22,6 +33,23 @@ export class SceneCanvasComponent implements OnInit {
       this.didInit = true
       this.main()
     })
+
+    window.addEventListener('pointermove', (event) => {
+      this.onMouseMove(event)
+    })
+  }
+
+  onMouseMove(event: any) {
+    const x = event.x / window.innerWidth * 2
+    const y = (1 - event.y / window.innerHeight) * 2
+    if (this.position == undefined) {
+      this.position = {
+        x: x,
+        y: y
+      }
+    }
+    this.position.x = x
+    this.position.y = y
   }
 
   main() {
@@ -38,8 +66,15 @@ export class SceneCanvasComponent implements OnInit {
     const programInfo = {
       program: shaderProgram,
       uniformLocations: {
-        width: gl.getUniformLocation(shaderProgram, 'u_Width'),
-        height: gl.getUniformLocation(shaderProgram, 'u_Height')
+        width: gl.getUniformLocation(shaderProgram, 'width'),
+        height: gl.getUniformLocation(shaderProgram, 'height'),
+        c: gl.getUniformLocation(shaderProgram, 'c'),
+        positions: gl.getUniformLocation(shaderProgram, 'positions'),
+        velocities: gl.getUniformLocation(shaderProgram, 'velocities'),
+        accelerations: gl.getUniformLocation(shaderProgram, 'accelerations'),
+        positionCount: gl.getUniformLocation(shaderProgram, 'positionCount'),
+        velocityCount: gl.getUniformLocation(shaderProgram, 'velocityCount'),
+        accelerationCount: gl.getUniformLocation(shaderProgram, 'accelerationCount'),
       },
       attribLocations: {
         vertexPosition: gl.getAttribLocation(shaderProgram, 'i_VertexPosition')
@@ -49,12 +84,57 @@ export class SceneCanvasComponent implements OnInit {
       this.canvas.nativeElement.width = this.canvas.nativeElement.clientWidth
       this.canvas.nativeElement.height = this.canvas.nativeElement.clientHeight
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-      this.drawScene(gl, programInfo)
+      if (this.positions.length > 0) {
+        this.drawScene(gl, programInfo)
+      }
     }
     resizeCanvas()
+
+    var t = 0
     var render = () => {
-      this.drawScene(gl, programInfo)
-      // requestAnimationFrame(render)
+      if (this.positions.length > 0) {
+        this.drawScene(gl, programInfo)
+      }
+      const f = 0.9
+      this.position = {
+        x: .1 * Math.cos(2 * Math.PI * f * t) + 1,
+        y: 0. * Math.sin(2 * Math.PI * f * t) + 1
+      }
+      // this.position = {
+      //   x: 1,
+      //   y: Math.floor(Math.min(0.4*t, 1)) * 2
+      // }
+      t += this.dt
+      const scale = 0.5
+      if (this.position != undefined) {
+        var n = this.positions.length
+        if (n >= 2) {
+          var dx = this.position.x - this.positions[n - 2]
+          var dy = this.position.y - this.positions[n - 1]
+          this.velocity.x = dx / this.dt * scale
+          this.velocity.y = dy / this.dt * scale
+          if (n >= 3) {
+            var dvx = this.velocity.x - this.velocities[n - 2]
+            var dvy = this.velocity.y - this.velocities[n - 1]
+            this.acceleration.x = dvx / this.dt * (scale * scale)
+            this.acceleration.y = dvy / this.dt * (scale * scale)
+          }
+        }
+        this.positions.push(this.position.x)
+        this.positions.push(this.position.y)
+        
+        this.velocities.push(this.velocity.x)
+        this.velocities.push(this.velocity.y)
+        this.accelerations.push(this.acceleration.x)
+        this.accelerations.push(this.acceleration.y)
+        
+        this.positions = this.positions.slice(-600)
+        this.velocities = this.velocities.slice(-600)
+        this.accelerations = this.accelerations.slice(-600)
+        
+        // console.log(this.velocities[this.velocities.length - 1])
+      }
+      requestAnimationFrame(render)
     }
     render()
   }
@@ -84,6 +164,13 @@ export class SceneCanvasComponent implements OnInit {
     gl.useProgram(programInfo.program)
     gl.uniform1f(programInfo.uniformLocations.width, gl.canvas.width)
     gl.uniform1f(programInfo.uniformLocations.height, gl.canvas.height)
+    gl.uniform1f(programInfo.uniformLocations.c, this.c)
+    gl.uniform2fv(programInfo.uniformLocations.positions, this.positions)
+    gl.uniform2fv(programInfo.uniformLocations.velocities, this.velocities)
+    gl.uniform2fv(programInfo.uniformLocations.accelerations, this.accelerations)
+    gl.uniform1i(programInfo.uniformLocations.positionCount, this.positions.length / 2)
+    gl.uniform1i(programInfo.uniformLocations.velocityCount, this.velocities.length / 2)
+    gl.uniform1i(programInfo.uniformLocations.accelerationCount, this.accelerations.length / 2)
     {
       const numComponents = 2
       const type = gl.FLOAT
