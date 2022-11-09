@@ -15,7 +15,7 @@ uniform int accelerationCount;
 out vec4 o_FragColor;
 
 const float q = -1.0;
-const float interpolationSteps = 10.0;
+const float interpolationSteps = 15.0;
 uint hash(uint ste);
 float random(uint seed);
 
@@ -55,9 +55,9 @@ void main() {
   }
   vec3 poynting = cross(E, B);
 
-  float t = clamp(log(length(E)) / 15.0, 0.0, 1.0);
-  vec3 color1 = vec3(1.0);//vec3(1.0, 0.1, 0.1);
-  vec3 color2 = vec3(0.0);//vec3(0.1, 0.1, 1.0);
+  float t = clamp(log(length(E)) / 20.0, 0.0, 1.0);
+  vec3 color1 = vec3(1.0);
+  vec3 color2 = vec3(0.0);
   o_FragColor = vec4(t * color1  + (1.0 - t) * color2, 1.0);
 }
 

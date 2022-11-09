@@ -11,7 +11,7 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
 
-  c = 0.5
+  c = 0.3
   dt = 1.0 / 30
 
   position?: {x: number, y: number}
@@ -103,29 +103,28 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const f = 2
+      const f = 10
       this.position = {
         x: .0 * Math.cos(2 * Math.PI * f * t) + 1,
-        y: .02 * Math.sin(2 * Math.PI * f * t) + 1
+        y: .005 * Math.sin(2 * Math.PI * f * t) + 1
       }
       t += this.dt
       // this.position = {
       //   x: 1,
       //   y: Math.floor(Math.min(0.4*t, 1)) * 2
       // }
-      const scale = 0.5
       if (this.position != undefined) {
         var n = this.positions.length
         if (n >= 2) {
           var dx = this.position.x - this.positions[n - 2]
           var dy = this.position.y - this.positions[n - 1]
-          this.velocity.x = dx / this.dt * scale + 0.4
-          this.velocity.y = dy / this.dt * scale
+          this.velocity.x = dx / this.dt
+          this.velocity.y = dy / this.dt
           if (n >= 3) {
             var dvx = this.velocity.x - this.velocities[n - 2]
             var dvy = this.velocity.y - this.velocities[n - 1]
-            this.acceleration.x = dvx / this.dt * (scale * scale) 
-            this.acceleration.y = dvy / this.dt * (scale * scale)
+            this.acceleration.x = dvx / this.dt
+            this.acceleration.y = dvy / this.dt
           }
         }
         this.positions.push(this.position.x)
