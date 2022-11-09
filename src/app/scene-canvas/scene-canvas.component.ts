@@ -11,7 +11,7 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
 
-  c = 0.3
+  c = 0.8
   dt = 1.0 / 30
 
   position?: {x: number, y: number}
@@ -103,10 +103,10 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const f = 10
+      const f = 2
       this.position = {
         x: .0 * Math.cos(2 * Math.PI * f * t) + 1,
-        y: .005 * Math.sin(2 * Math.PI * f * t) + 1
+        y: .04 * Math.sin(2 * Math.PI * f * t) + 1
       }
       t += this.dt
       // this.position = {

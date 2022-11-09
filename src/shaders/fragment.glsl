@@ -15,7 +15,6 @@ uniform int accelerationCount;
 out vec4 o_FragColor;
 
 const float q = -1.0;
-const float interpolationSteps = 15.0;
 uint hash(uint ste);
 float random(uint seed);
 
@@ -25,32 +24,30 @@ void main() {
   vec3 E = vec3(0.0);
   vec3 B = vec3(0.0);
   for(int i = 0; i < positionCount - 1; i++) {
-    float d = abs((float(i) * dt + distance(position.xy, positions[i]) / c) - float(positionCount-1) * dt);
-    if (d <= dt * 2.0) {
-      for (float interpolation = 0.0; interpolation < 1.0; interpolation += 1.0 / interpolationSteps) {
-        vec2 retardedPosition = positions[i] * (1.0 - interpolation) + positions[i + 1] * interpolation;
-        float d = abs(((float(i) + interpolation) * dt + distance(position.xy, retardedPosition) / c) - float(positionCount-1) * dt);
-        if (d <= dt / interpolationSteps * 7.0) {
-          vec2 r0xy = retardedPosition;
-          vec3 r0 = vec3(r0xy.x, r0xy.y, 0.0);
-          vec3 r = position - r0;
-          vec2 vxy = velocities[i] * (1.0 - interpolation) + velocities[i + 1] * interpolation;
-          vec3 v = vec3(vxy.x, vxy.y, 0.0);
-          vec2 axy = accelerations[i] * (1.0 - interpolation) + accelerations[i + 1] * interpolation;
-          vec3 a = vec3(axy.x, axy.y, 0.0);
-          float rMag = length(r);
-          vec3 n = r / rMag;
-          vec3 vRelat = v / c;
-          float vMag = length(v);
-          float gamma2 = 1.0 / (1.0 - vMag * vMag / (c * c));
+    float timeInterval = float(positionCount - 1 - i) * dt;
+    float timeToReach = distance(position.xy, positions[i]) / c;
+    float timeIntervalAfter = float(positionCount - 1 - (i + 1)) * dt;
+    float timeToReachAfter = distance(position.xy, positions[i + 1]) / c;
+    bool isBetween = timeInterval >= timeToReach && timeIntervalAfter < timeToReachAfter;
+    float interpolation = (timeInterval - timeToReach) / (timeInterval - timeToReach + timeToReachAfter - timeIntervalAfter);
+    if (isBetween) {
+      vec2 r0xy = positions[i] * (1.0 - interpolation) + positions[i + 1] * interpolation;
+      vec3 r0 = vec3(r0xy.x, r0xy.y, 0.0);
+      vec3 r = position - r0;
+      vec2 vxy = velocities[i] * (1.0 - interpolation) + velocities[i + 1] * interpolation;
+      vec3 v = vec3(vxy.x, vxy.y, 0.0);
+      vec2 axy = accelerations[i] * (1.0 - interpolation) + accelerations[i + 1] * interpolation;
+      vec3 a = vec3(axy.x, axy.y, 0.0);
+      float rMag = length(r);
+      vec3 n = r / rMag;
+      vec3 vRelat = v / c;
+      float gamma2 = 1.0 / (1.0 - dot(v, v) / (c * c));
 
-          float denominator = pow(1.0 - dot(n, vRelat), 3.0);
-          vec3 near = (n - vRelat) / (gamma2 * denominator);
-          vec3 far = cross(n, cross(n - vRelat, a)) / denominator;
-          E += q * (near / (rMag * rMag) + far / rMag);
-          B += cross(n / c, E);
-        }
-      }
+      float denominator = pow(1.0 - dot(n, vRelat), 3.0);
+      vec3 near = (n - vRelat) / (gamma2 * denominator);
+      vec3 far = cross(n, cross(n - vRelat, a)) / denominator;
+      E += q * (near / (rMag * rMag) + far / rMag);
+      B += cross(n / c, E);
     }
   }
   vec3 poynting = cross(E, B);
