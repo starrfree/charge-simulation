@@ -11,8 +11,8 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
 
-  c = 0.8
-  dt = 1.0 / 30
+  c = 2
+  dt = 1.0 / 60
 
   position?: {x: number, y: number}
   velocity: {x: number, y: number} =  {x: 0, y: 0}
@@ -34,14 +34,14 @@ export class SceneCanvasComponent implements OnInit {
       this.main()
     })
 
-    window.addEventListener('pointermove', (event) => {
-      this.onMouseMove(event)
-    })
+    // window.addEventListener('pointermove', (event) => {
+    //   this.onMouseMove(event)
+    // })
   }
 
   onMouseMove(event: any) {
-    const x = event.x / window.innerWidth * 2
-    const y = (1 - event.y / window.innerHeight) * 2
+    const x = event.x / window.innerWidth * 4
+    const y = (1 - event.y / window.innerHeight) * 4
     if (this.position == undefined) {
       this.position = {
         x: x,
@@ -103,16 +103,31 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const f = 2
-      this.position = {
-        x: .0 * Math.cos(2 * Math.PI * f * t) + 1,
-        y: .04 * Math.sin(2 * Math.PI * f * t) + 1
-      }
-      t += this.dt
+      // const f = 3
       // this.position = {
-      //   x: 1,
-      //   y: Math.floor(Math.min(0.4*t, 1)) * 2
+      //   x: .0 * Math.cos(2 * Math.PI * f * t) + 2,
+      //   y: .05 * Math.sin(2 * Math.PI * f * t) + 2
       // }
+      const f = 3
+      this.position = {
+        x: 1.5 * Math.sin(2 * Math.PI * 0.11 * t) + 2,
+        y: .02 * Math.sin(2 * Math.PI * f * t) + 2
+      }
+      // const f = 4
+      // this.position = {
+      //   x: t * 1,
+      //   y: .01 * Math.sin(2 * Math.PI * f * t) + 2
+      // }
+      // if (this.position == undefined) {
+      //   this.position = {
+      //     x: 2,
+      //     y: 2
+      //   }
+      // } else {
+      //   this.position.x += (Math.random() * 2 - 1) * this.dt * 0.1
+      //   this.position.y += (Math.random() * 2 - 1) * this.dt * 0.1
+      // }
+      t += this.dt
       if (this.position != undefined) {
         var n = this.positions.length
         if (n >= 2) {
