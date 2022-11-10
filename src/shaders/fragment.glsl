@@ -20,7 +20,8 @@ float random(uint seed);
 vec3 hsv2rgb(vec3 c);
 
 void main() {
-  vec3 position = vec3(gl_FragCoord.x / width * 4.0, gl_FragCoord.y / height * 4.0, 0.0);
+  float size = min(width, height);
+  vec3 position = vec3(gl_FragCoord.x / size * 4.0, gl_FragCoord.y / size * 4.0, 0.0);
   int tr = 1;
   vec3 E = vec3(0.0);
   vec3 B = vec3(0.0);
@@ -57,7 +58,7 @@ void main() {
   // vec3 color2 = vec3(0.0);
   // o_FragColor = vec4(t * color1  + (1.0 - t) * color2, 1.0);
   // o_FragColor = vec4(hsv2rgb(vec3(atan(E.y, E.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
-  float t = clamp(log(length(E) + 1.0) / 5.0, 0.0, 1.0);
+  float t = clamp(log(length(E) + 1.0) / 4.0, 0.0, 1.0);
   o_FragColor = vec4(hsv2rgb(vec3(atan(E.y, E.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
   // float t = clamp(log(length(poynting) + 1.0) / 5.0, 0.0, 1.0);
   // o_FragColor = vec4(hsv2rgb(vec3(atan(poynting.y, poynting.x) / (2.0 * 3.1415), 1.0, t)), 1.0);

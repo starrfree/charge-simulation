@@ -22,6 +22,14 @@ export class SceneCanvasComponent implements OnInit {
   velocities: number[] = []
   accelerations: number[] = []
 
+  public get center() : {x: number, y: number} {
+    const size = Math.min(window.innerWidth, window.innerHeight)
+    return {
+      x: window.innerWidth / size * 4 / 2,
+      y: window.innerHeight / size * 4 / 2
+    }
+  }
+  
   constructor(private shaderService: ShaderService) {
   }
 
@@ -40,8 +48,9 @@ export class SceneCanvasComponent implements OnInit {
   }
 
   onMouseMove(event: any) {
-    const x = event.x / window.innerWidth * 4
-    const y = (1 - event.y / window.innerHeight) * 4
+    const size = Math.min(window.innerWidth, window.innerHeight)
+    const x = event.x / size * 4
+    const y = (1 - event.y / size) * 4
     if (this.position == undefined) {
       this.position = {
         x: x,
@@ -85,11 +94,17 @@ export class SceneCanvasComponent implements OnInit {
       this.canvas.nativeElement.width = this.canvas.nativeElement.clientWidth
       this.canvas.nativeElement.height = this.canvas.nativeElement.clientHeight
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
+      this.positions = []
+      this.velocities = []
+      this.accelerations = []
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
     }
     resizeCanvas()
+    window.addEventListener('resize', () => {
+      resizeCanvas()
+    })
 
     var time = new Date().getTime()
     var t = 0
@@ -103,25 +118,26 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      // const f = 3
-      // this.position = {
-      //   x: .0 * Math.cos(2 * Math.PI * f * t) + 2,
-      //   y: .05 * Math.sin(2 * Math.PI * f * t) + 2
-      // }
+      const center = this.center
       const f = 3
       this.position = {
-        x: 1.5 * Math.sin(2 * Math.PI * 0.11 * t) + 2,
-        y: .02 * Math.sin(2 * Math.PI * f * t) + 2
+        x: .0 * Math.cos(2 * Math.PI * f * t) + center.x,
+        y: .05 * Math.sin(2 * Math.PI * f * t) + center.y
       }
+      // const f = 3
+      // this.position = {
+      //   x: 1.5 * Math.sin(2 * Math.PI * 0.11 * t) + .0 * Math.cos(2 * Math.PI * f * t) + center.x,
+      //   y: .02 * Math.sin(2 * Math.PI * f * t) + center.y
+      // }
       // const f = 4
       // this.position = {
       //   x: t * 1,
-      //   y: .01 * Math.sin(2 * Math.PI * f * t) + 2
+      //   y: .01 * Math.sin(2 * Math.PI * f * t) + center.y
       // }
       // if (this.position == undefined) {
       //   this.position = {
-      //     x: 2,
-      //     y: 2
+      //     x: center.x,
+      //     y: center.y
       //   }
       // } else {
       //   this.position.x += (Math.random() * 2 - 1) * this.dt * 0.1
