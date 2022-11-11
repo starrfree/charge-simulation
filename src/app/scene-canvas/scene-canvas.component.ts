@@ -1,4 +1,5 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { ParametersService } from '../parameters.service';
 import { ShaderService } from '../shader.service';
 
 declare function getPosition(t: number, expressionX: string, expressionY: string): {x: number, y: number};
@@ -10,11 +11,13 @@ declare function getPosition(t: number, expressionX: string, expressionY: string
 })
 export class SceneCanvasComponent implements OnInit {
   @ViewChild('glCanvas') public canvas!: ElementRef
+  @Output() colorAtPointer = new EventEmitter<{r: number, g: number, b: number}>()
   didInit: boolean = false
   buffers: any
 
   c = 2
   dt = 1.0 / 60
+  pointerPosition?: {x: number, y: number}
 
   position?: {x: number, y: number}
   velocity: {x: number, y: number} =  {x: 0, y: 0}
@@ -32,7 +35,7 @@ export class SceneCanvasComponent implements OnInit {
     }
   }
   
-  constructor(private shaderService: ShaderService) {
+  constructor(private shaderService: ShaderService, private parametersService: ParametersService) {
   }
 
   ngOnInit(): void {
@@ -45,23 +48,32 @@ export class SceneCanvasComponent implements OnInit {
       this.main()
     })
 
-    // window.addEventListener('pointermove', (event) => {
-    //   this.onMouseMove(event)
-    // })
+    window.addEventListener('pointermove', (event) => {
+      this.onMouseMove(event)
+    })
+    window.addEventListener('pointerdown', (event) => {
+      this.onMouseMove(event)
+    })
   }
 
   onMouseMove(event: any) {
-    const size = Math.min(window.innerWidth, window.innerHeight)
-    const x = event.x / size * 4
-    const y = (1 - event.y / size) * 4
-    if (this.position == undefined) {
-      this.position = {
+    var x: number
+    var y: number
+    if (event.touches) {
+      x = event.touches[0].clientX
+      y = event.touches[0].clientY
+    } else {
+      x = event.x
+      y = event.y
+    }
+    if (this.pointerPosition == undefined) {
+      this.pointerPosition = {
         x: x,
         y: y
       }
     }
-    this.position.x = x
-    this.position.y = y
+    this.pointerPosition.x = x
+    this.pointerPosition.y = y
   }
 
   main() {
@@ -111,11 +123,15 @@ export class SceneCanvasComponent implements OnInit {
 
     var time = new Date().getTime()
     var t = 0
+    const reset = () => {
+      t = 0
+      time = new Date().getTime()
+      resizeCanvas()
+    }
+    this.parametersService.resetSimulation = reset
     window.addEventListener('keypress', (event) => {
       if (event.key == 'r') {
-        t = 0
-        time = new Date().getTime()
-        resizeCanvas()
+        reset()
       }
     })
     var render = () => {
@@ -128,31 +144,11 @@ export class SceneCanvasComponent implements OnInit {
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
-      const center = this.center
-      // const f = 3
-      // this.position = {
-      //   x: .03 * Math.cos(2 * Math.PI * f * t) + center.x,
-      //   y: .03 * Math.sin(2 * Math.PI * f * t) + center.y
-      // }
-      const f = 3
+      var position = getPosition(t, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
       this.position = {
-        x: 1.3 * Math.sin(2 * Math.PI * 0.11 * t) + center.x,
-        y: .04 * Math.sin(2 * Math.PI * f * t) + center.y
+        x: position.x + this.center.x,
+        y: position.y + this.center.y
       }
-      // const f = 4
-      // this.position = {
-      //   x: t * 1,
-      //   y: .01 * Math.sin(2 * Math.PI * f * t) + center.y
-      // }
-      // if (this.position == undefined) {
-      //   this.position = {
-      //     x: center.x,
-      //     y: center.y
-      //   }
-      // } else {
-      //   this.position.x += (Math.random() * 2 - 1) * this.dt * 0.1
-      //   this.position.y += (Math.random() * 2 - 1) * this.dt * 0.1
-      // }
       t += this.dt
       if (this.position != undefined) {
         var n = this.positions.length
@@ -179,10 +175,18 @@ export class SceneCanvasComponent implements OnInit {
         this.positions = this.positions.slice(-600)
         this.velocities = this.velocities.slice(-600)
         this.accelerations = this.accelerations.slice(-600)
-        
-        // console.log(this.velocities[this.velocities.length - 1])
       }
       requestAnimationFrame(render)
+      
+      if (this.pointerPosition) {
+        const pixels = new Uint8Array(4)
+        gl.readPixels(this.pointerPosition.x, this.pointerPosition.y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+        this.colorAtPointer.emit({
+          r: pixels[0] / 255,
+          g: pixels[1] / 255,
+          b: pixels[2] / 255
+        })
+      }
     }
     render()
   }

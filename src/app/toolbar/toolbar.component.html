@@ -6,9 +6,16 @@
     <div class="title">Charge Simulation</div>
     <div class="tools-container">
       <div class="section">
-        <div class="medium-title">Simulation Presets</div>
+        <div class="medium-title">Movement</div>
+        <div class="radio-button-container">
+          <span *ngFor="let preset of parametersService.possiblePresets" class="radio-button" (click)="setPreset(preset)">
+            <img *ngIf="parametersService.parameters.preset != preset" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.preset == preset" class="radio-mark" src="assets/svg/circle.circle.svg" alt="not selected">
+            <span>{{parametersService.getTitle(preset)}}</span>
+          </span>
+        </div>
       </div>
-      <div class="invisible-divider"></div>
+      <div class="section-divider"></div>
       <div class="section">
         <div class="medium-title">Commands</div>
         <div class="row">
@@ -19,6 +26,20 @@
           <div class="command">R</div>
           <div class="command-description">Reset simulation</div>
         </div>
+      </div>
+      <div class="section-divider"></div>
+      <div class="section img-overlay-svg">
+        <img src="assets/images/colorwheel.png" class="colorwheel" alt="Color Wheel">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+          <defs>
+            <marker id="arrowhead" markerWidth="5" markerHeight="3" 
+            refX="0" refY="1.5" orient="auto" fill="#fff">
+              <polygon points="0 0, 5 1.5, 0 3" />
+            </marker>
+          </defs>
+          <line x1="110" y1="114" [attr.x2]="getVector()!.x * 85 + 110" [attr.y2]="getVector()!.y * 85 + 114" stroke="#fff" 
+          stroke-width="2" marker-end="url(#arrowhead)"/>
+        </svg>
       </div>
     </div>
   </div>

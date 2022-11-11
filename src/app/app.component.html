@@ -1,6 +1,6 @@
-<app-scene-canvas></app-scene-canvas>
+<app-scene-canvas (colorAtPointer)="colorAtPointer = $event"></app-scene-canvas>
 <div *ngIf="notFullScreen">
-  <app-toolbar *ngIf="showToolbar" (escape)="showToolbar = false"></app-toolbar>
+  <app-toolbar *ngIf="showToolbar" (escape)="showToolbar = false" [colorAtPointer]="colorAtPointer"></app-toolbar>
   <div *ngIf="!showToolbar" class="toolbar-button-container glass" (click)="showToolbar = !showToolbar">
     <img src="assets/svg/gearshape.fill.svg" alt="toolbar">
   </div>

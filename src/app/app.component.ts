@@ -8,6 +8,7 @@ import { Component, HostListener } from '@angular/core';
 export class AppComponent {
   title = 'charge-simulation';
   showToolbar = false
+  colorAtPointer?: {r: number, g: number, b: number}
 
   get notFullScreen(): boolean {
     return document.fullscreenElement == null

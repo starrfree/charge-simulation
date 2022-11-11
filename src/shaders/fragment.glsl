@@ -59,7 +59,7 @@ void main() {
   // o_FragColor = vec4(t * color1  + (1.0 - t) * color2, 1.0);
   // o_FragColor = vec4(hsv2rgb(vec3(atan(E.y, E.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
   float t = clamp(log(length(E) + 1.0) / 4.0, 0.0, 1.0);
-  o_FragColor = vec4(hsv2rgb(vec3(atan(E.y, E.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
+  o_FragColor = vec4(hsv2rgb(vec3(-atan(E.y, E.x) / (2.0 * 3.1415) - 0.5, 1.0, t)), 1.0);
   // float t = clamp(log(length(poynting) + 1.0) / 5.0, 0.0, 1.0);
   // o_FragColor = vec4(hsv2rgb(vec3(atan(poynting.x, poynting.y) / (2.0 * 3.1415), 1.0, t)), 1.0);
 }
