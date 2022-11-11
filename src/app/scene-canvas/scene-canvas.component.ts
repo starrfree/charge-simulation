@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ShaderService } from '../shader.service';
 
 @Component({
@@ -119,16 +119,16 @@ export class SceneCanvasComponent implements OnInit {
         this.drawScene(gl, programInfo)
       }
       const center = this.center
-      const f = 3
-      this.position = {
-        x: .0 * Math.cos(2 * Math.PI * f * t) + center.x,
-        y: .05 * Math.sin(2 * Math.PI * f * t) + center.y
-      }
       // const f = 3
       // this.position = {
-      //   x: 1.5 * Math.sin(2 * Math.PI * 0.11 * t) + .0 * Math.cos(2 * Math.PI * f * t) + center.x,
-      //   y: .02 * Math.sin(2 * Math.PI * f * t) + center.y
+      //   x: .03 * Math.cos(2 * Math.PI * f * t) + center.x,
+      //   y: .03 * Math.sin(2 * Math.PI * f * t) + center.y
       // }
+      const f = 3
+      this.position = {
+        x: 1.3 * Math.sin(2 * Math.PI * 0.11 * t) + center.x,
+        y: .04 * Math.sin(2 * Math.PI * f * t) + center.y
+      }
       // const f = 4
       // this.position = {
       //   x: t * 1,

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,24 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'webgl-template';
+  title = 'charge-simulation';
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    if (event.key == "f") {
+      if (document.fullscreenElement == null) {
+        this.openFullscreen()
+      } else {
+        this.closeFullscreen()
+      }
+    }
+  }
+
+  openFullscreen() {
+    document.documentElement.requestFullscreen();
+  }
+
+  closeFullscreen() {
+    document.exitFullscreen();
+  }
 }
