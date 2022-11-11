@@ -7,11 +7,16 @@ import { Component, HostListener } from '@angular/core';
 })
 export class AppComponent {
   title = 'charge-simulation';
+  showToolbar = false
+
+  get notFullScreen(): boolean {
+    return document.fullscreenElement == null
+  }
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) { 
     if (event.key == "f") {
-      if (document.fullscreenElement == null) {
+      if (this.notFullScreen) {
         this.openFullscreen()
       } else {
         this.closeFullscreen()

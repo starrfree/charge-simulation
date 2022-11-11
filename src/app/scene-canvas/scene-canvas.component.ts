@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ShaderService } from '../shader.service';
 
+declare function getPosition(t: number, expressionX: string, expressionY: string): {x: number, y: number};
+
 @Component({
   selector: 'app-scene-canvas',
   templateUrl: './scene-canvas.component.html',
@@ -34,6 +36,7 @@ export class SceneCanvasComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    var p = getPosition(Math.PI / 6, "cos(t)", "sin(t)")
   }
 
   ngAfterViewInit(): void {
@@ -108,6 +111,13 @@ export class SceneCanvasComponent implements OnInit {
 
     var time = new Date().getTime()
     var t = 0
+    window.addEventListener('keypress', (event) => {
+      if (event.key == 'r') {
+        t = 0
+        time = new Date().getTime()
+        resizeCanvas()
+      }
+    })
     var render = () => {
       if ((new Date().getTime() - time) / 1000 < this.dt) {
         requestAnimationFrame(render)

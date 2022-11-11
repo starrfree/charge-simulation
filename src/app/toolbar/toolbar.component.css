@@ -1,0 +1,102 @@
+.container {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  padding: 20px;
+  height: calc(100% - 50px);
+  width: 100%;
+  max-width: 250px;
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding: 0 20px;
+}
+
+.content::-webkit-scrollbar {
+  display: none;
+}
+
+.glass {
+  background: rgba(160, 160, 160, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.escape-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  opacity: 0.9;
+  transition: transform 200ms;
+}
+
+.escape-button:hover {
+  transform: scale(1.1);
+}
+
+.title {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 60px;
+}
+
+.tools-container {
+  margin-top: 20px;
+}
+
+.section {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  margin-right: 20px;
+}
+
+.medium-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.row {
+  margin: 10px 0;
+}
+
+.command {
+  width: 30px;
+  height: 30px;
+  background: rgba(128, 128, 128, 0.5);
+  border-radius: 5px;
+  display: inline-flex;
+  justify-content: center;
+  /* font-family: 'Lato', sans-serif; */
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 30px;
+  user-select: none;
+  box-shadow: inset 0px 0px 2px rgba(172, 172, 172, 0.3);
+}
+
+.command-description {
+  margin-left: 10px;
+  display: inline-flex;
+  font-size: large;
+  font-size: 17px;
+}
+
+.invisible-divider {
+  height: 20px;
+}
