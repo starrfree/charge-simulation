@@ -13,18 +13,33 @@
             <img *ngIf="parametersService.parameters.preset == preset" class="radio-mark" src="assets/svg/circle.circle.svg" alt="not selected">
             <span>{{parametersService.getTitle(preset)}}</span>
           </span>
+          <span class="radio-button" (click)="setPreset('custom')">
+            <img *ngIf="parametersService.parameters.preset != 'custom'" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.preset == 'custom'" class="radio-mark" src="assets/svg/circle.circle.svg" alt="not selected">
+            <span>Custom</span>
+          </span>
         </div>
       </div>
       <div class="section-divider"></div>
       <div class="section">
-        <div class="medium-title">Commands</div>
-        <div class="row">
-          <div class="command">F</div>
-          <div class="command-description">Full screen</div>
+        <div class="medium-title">Charge Position</div>
+        <!-- <div class="row function">
+          x(t) = {{parametersService.parameters.expressionX}}
         </div>
-        <div class="row">
-          <div class="command">R</div>
-          <div class="command-description">Reset simulation</div>
+        <div class="row function">
+          y(t) = {{parametersService.parameters.expressionY}}
+        </div> -->
+        <div class="row function">
+          <span>x(t) = </span><input class="expression" type="text" 
+          [ngModel]="parametersService.parameters.expressionX" [(ngModel)]="expressionX" (focusout)="setX()" (keydown.enter)="blur()"
+          [disabled]="parametersService.parameters.preset != 'custom'"
+          [style.opacity]="parametersService.parameters.preset == 'custom' ? 1 : 0.7">
+        </div>
+        <div class="row function">
+          <span>y(t) = </span><input class="expression" type="text" 
+          [ngModel]="parametersService.parameters.expressionY" [(ngModel)]="expressionY" (focusout)="setY()" (keydown.enter)="blur()"
+          [disabled]="parametersService.parameters.preset != 'custom'"
+          [style.opacity]="parametersService.parameters.preset == 'custom' ? 1 : 0.7">
         </div>
       </div>
       <div class="section-divider"></div>
@@ -41,6 +56,19 @@
           stroke-width="2" marker-end="url(#arrowhead)"/>
         </svg>
       </div>
+      <div class="section-divider"></div>
+      <div class="section">
+        <div class="medium-title">Commands</div>
+        <div class="row">
+          <div class="command">F</div>
+          <div class="command-description">Full screen</div>
+        </div>
+        <div class="row">
+          <div class="command">R</div>
+          <div class="command-description">Reset simulation</div>
+        </div>
+      </div>
+      <div class="section-divider"></div>
     </div>
   </div>
 </div>

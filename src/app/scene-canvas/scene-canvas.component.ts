@@ -16,7 +16,7 @@ export class SceneCanvasComponent implements OnInit {
   buffers: any
 
   c = 2
-  dt = 1.0 / 60
+  dt = 1.0 / 40
   pointerPosition?: {x: number, y: number}
 
   position?: {x: number, y: number}
@@ -100,6 +100,7 @@ export class SceneCanvasComponent implements OnInit {
         positionCount: gl.getUniformLocation(shaderProgram, 'positionCount'),
         velocityCount: gl.getUniformLocation(shaderProgram, 'velocityCount'),
         accelerationCount: gl.getUniformLocation(shaderProgram, 'accelerationCount'),
+        pointerPosition: gl.getUniformLocation(shaderProgram, 'pointerPosition'),
       },
       attribLocations: {
         vertexPosition: gl.getAttribLocation(shaderProgram, 'i_VertexPosition')
@@ -126,6 +127,9 @@ export class SceneCanvasComponent implements OnInit {
     const reset = () => {
       t = 0
       time = new Date().getTime()
+      this.positions = []
+      this.velocities = []
+      this.accelerations = []
       resizeCanvas()
     }
     this.parametersService.resetSimulation = reset
