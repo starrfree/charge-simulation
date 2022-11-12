@@ -4,4 +4,7 @@
   <div *ngIf="!showToolbar" class="toolbar-button-container glass" (click)="showToolbar = !showToolbar">
     <img src="assets/svg/gearshape.fill.svg" alt="toolbar">
   </div>
+  <div *ngIf="parametersService.parameters.showWheel && !showToolbar" class="legend-container dark-glass">
+    <app-colorwheel class="colorwheel" [x]="getVector().x" [y]="getVector().y"></app-colorwheel>
+  </div>
 </div>

@@ -123,23 +123,6 @@
   transform: translateY(1px);
 }
 
-.img-overlay-svg {
-  position: relative;
-  display: inline-block;
-}
-
-.img-overlay-svg img {
-   display: block;
-   max-width: 100%;
-   height: auto;
-}
-
-.img-overlay-svg svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 .function {
   margin: 20px 0 0 0;
 }
@@ -156,5 +139,19 @@
 }
 
 .expression:focus {
+  outline: 0;
+}
+
+.top-left {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+}
+
+.checkbox {
+  accent-color: #777;
+}
+
+.checkbox:focus {
   outline: 0;
 }

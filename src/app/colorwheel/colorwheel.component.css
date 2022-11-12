@@ -1,0 +1,16 @@
+.img-overlay-svg {
+  position: relative;
+  display: inline-block;
+}
+
+.img-overlay-svg img {
+   display: block;
+   max-width: 100%;
+   height: auto;
+}
+
+.img-overlay-svg svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

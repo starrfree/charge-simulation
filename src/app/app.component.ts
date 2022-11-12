@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { ParametersService } from './parameters.service';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,17 @@ export class AppComponent {
       } else {
         this.closeFullscreen()
       }
+    }
+  }
+
+  constructor(public parametersService: ParametersService) {
+  }
+
+  getVector() {
+    var vector = this.parametersService.getVector(this.colorAtPointer)
+    return {
+      x: vector?.x ?? 0,
+      y: vector?.y ?? 0
     }
   }
 

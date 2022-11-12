@@ -7,12 +7,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SceneCanvasComponent } from './scene-canvas/scene-canvas.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { ColorwheelComponent } from './colorwheel/colorwheel.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SceneCanvasComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    ColorwheelComponent
   ],
   imports: [
     BrowserModule,
