@@ -17,7 +17,7 @@ export class SceneCanvasComponent implements OnInit {
   textures: any
 
   c = 2
-  dt = 1.0 / 40
+  dt = 1.0 / 60
   pointerPosition?: {x: number, y: number}
 
   position?: {x: number, y: number}
@@ -80,13 +80,14 @@ export class SceneCanvasComponent implements OnInit {
     const gl = this.canvas.nativeElement.getContext("webgl2")
     this.shaderService.gl = gl
     var ext = gl.getExtension("EXT_color_buffer_float")
-    if (!ext) {
-      console.error("Unable to get EXT_color_buffer_float")
-    }
+    gl.getExtension("OES_texture_float_linear")
     if (gl === null) {
       console.error("Unable to initialize WebGL")
       alert("Unable to initialize WebGL. Your browser or machine may not support it.")
       return
+    }
+    if (!ext) {
+      console.error("Unable to get EXT_color_buffer_float")
     }
     this.buffers = this.initBuffers(gl)
     const shaderProgram = this.shaderService.initShaderProgram(gl, this.shaderService.vertexSource, this.shaderService.fragmentSource)
@@ -171,6 +172,14 @@ export class SceneCanvasComponent implements OnInit {
             this.acceleration.y = dvy / this.dt
           }
         }
+        // var dt = this.dt
+        // var positionDtM = getPosition(t - dt, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
+        // this.velocity.x = (position.x - positionDtM.x) / dt
+        // this.velocity.y = (position.y - positionDtM.y) / dt
+        // var positionDt = getPosition(t + dt, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
+        // this.acceleration.x = (positionDtM.x + positionDt.x - 2 * position.x) / (dt * dt)
+        // this.acceleration.y = (positionDtM.y + positionDt.y - 2 * position.y) / (dt * dt)
+
         this.positions.push(this.position.x)
         this.positions.push(this.position.y)
         
@@ -180,11 +189,15 @@ export class SceneCanvasComponent implements OnInit {
         this.accelerations.push(this.acceleration.x)
         this.accelerations.push(this.acceleration.y)
         
-        this.positions = this.positions.slice(-300 * 2)
-        this.velocities = this.velocities.slice(-300 * 2)
-        this.accelerations = this.accelerations.slice(-300 * 2)
+        while (this.positions.length > 1000) {
+          this.positions.shift()
+          this.velocities.shift()
+          this.accelerations.shift()
+        }
 
         this.textures = this.initTextures(gl)
+
+        console.log(this.positions.length)
       }
       requestAnimationFrame(render)
       
@@ -217,7 +230,6 @@ export class SceneCanvasComponent implements OnInit {
   }
 
   initTextures(gl: WebGL2RenderingContext) {
-    // var positionTexture = this.shaderService.textureFromPixelArray(gl, [1.0, 1.0, 0.0], gl.RGB, 1, 1)
     var positionTexture = this.shaderService.textureFromPixelArray(gl, this.positions, gl.RG, this.positions.length / 2, 1)
     var velocityTexture = this.shaderService.textureFromPixelArray(gl, this.velocities, gl.RG, this.velocities.length / 2, 1)
     var accelerationTexture = this.shaderService.textureFromPixelArray(gl, this.accelerations, gl.RG, this.accelerations.length / 2, 1)

@@ -24,26 +24,25 @@ void main() {
   float size = min(width, height);
   vec3 position = vec3(gl_FragCoord.x / size * 4.0, gl_FragCoord.y / size * 4.0, 0.0);
 
-  o_FragColor = vec4(distance(position, texture(accelerations, vec2(positionCount - 1, 0)).rgb));
-  return;
-
   int tr = 1;
   vec3 E = vec3(0.0);
   vec3 B = vec3(0.0);
   for(int i = 0; i < positionCount - 1; i++) {
+    vec2 texID = vec2(i, 0) / float(positionCount);
+    vec2 nextTexID = vec2(i + 1, 0) / float(positionCount);
     float timeInterval = float(positionCount - 1 - i) * dt;
-    float timeToReach = distance(position.xy, texture(positions, vec2(i, 0)).rg) / c;
+    float timeToReach = distance(position.xy, texture(positions, texID).rg) / c;
     float timeIntervalAfter = float(positionCount - 1 - (i + 1)) * dt;
-    float timeToReachAfter = distance(position.xy, texture(positions, vec2(i + 1, 0)).rg) / c;
+    float timeToReachAfter = distance(position.xy, texture(positions,nextTexID).rg) / c;
     bool isBetween = timeInterval >= timeToReach && timeIntervalAfter < timeToReachAfter;
     float interpolation = (timeInterval - timeToReach) / (timeInterval - timeToReach + timeToReachAfter - timeIntervalAfter);
     if (isBetween) {
-      vec2 r0xy = texture(positions, vec2(i, 0)).rg * (1.0 - interpolation) + texture(positions, vec2(i + 1, 0)).rg * interpolation;
+      vec2 r0xy = texture(positions, texID).rg * (1.0 - interpolation) + texture(positions,nextTexID).rg * interpolation;
       vec3 r0 = vec3(r0xy.x, r0xy.y, 0.0);
       vec3 r = position - r0;
-      vec2 vxy = texture(velocities, vec2(i, 0)).rg * (1.0 - interpolation) + texture(velocities, vec2(i + 1, 0)).rg * interpolation;
+      vec2 vxy = texture(velocities, texID).rg * (1.0 - interpolation) + texture(velocities,nextTexID).rg * interpolation;
       vec3 v = vec3(vxy.x, vxy.y, 0.0);
-      vec2 axy = texture(accelerations, vec2(i, 0)).rg * (1.0 - interpolation) + texture(accelerations, vec2(i + 1, 0)).rg * interpolation;
+      vec2 axy = texture(accelerations, texID).rg * (1.0 - interpolation) + texture(accelerations,nextTexID).rg * interpolation;
       vec3 a = vec3(axy.x, axy.y, 0.0);
       float rMag = length(r);
       vec3 n = r / rMag;
