@@ -14,6 +14,7 @@ export class SceneCanvasComponent implements OnInit {
   @Output() colorAtPointer = new EventEmitter<{r: number, g: number, b: number}>()
   didInit: boolean = false
   buffers: any
+  textures: any
 
   c = 2
   dt = 1.0 / 40
@@ -78,7 +79,10 @@ export class SceneCanvasComponent implements OnInit {
   main() {
     const gl = this.canvas.nativeElement.getContext("webgl2")
     this.shaderService.gl = gl
-    gl.getExtension("EXT_color_buffer_float")
+    var ext = gl.getExtension("EXT_color_buffer_float")
+    if (!ext) {
+      console.error("Unable to get EXT_color_buffer_float")
+    }
     if (gl === null) {
       console.error("Unable to initialize WebGL")
       alert("Unable to initialize WebGL. Your browser or machine may not support it.")
@@ -172,12 +176,15 @@ export class SceneCanvasComponent implements OnInit {
         
         this.velocities.push(this.velocity.x)
         this.velocities.push(this.velocity.y)
+
         this.accelerations.push(this.acceleration.x)
         this.accelerations.push(this.acceleration.y)
         
-        this.positions = this.positions.slice(-600)
-        this.velocities = this.velocities.slice(-600)
-        this.accelerations = this.accelerations.slice(-600)
+        this.positions = this.positions.slice(-300 * 2)
+        this.velocities = this.velocities.slice(-300 * 2)
+        this.accelerations = this.accelerations.slice(-300 * 2)
+
+        this.textures = this.initTextures(gl)
       }
       requestAnimationFrame(render)
       
@@ -209,6 +216,18 @@ export class SceneCanvasComponent implements OnInit {
     }
   }
 
+  initTextures(gl: WebGL2RenderingContext) {
+    // var positionTexture = this.shaderService.textureFromPixelArray(gl, [1.0, 1.0, 0.0], gl.RGB, 1, 1)
+    var positionTexture = this.shaderService.textureFromPixelArray(gl, this.positions, gl.RG, this.positions.length / 2, 1)
+    var velocityTexture = this.shaderService.textureFromPixelArray(gl, this.velocities, gl.RG, this.velocities.length / 2, 1)
+    var accelerationTexture = this.shaderService.textureFromPixelArray(gl, this.accelerations, gl.RG, this.accelerations.length / 2, 1)
+    return {
+      positions: positionTexture,
+      velocities: velocityTexture,
+      accelerations: accelerationTexture
+    }
+  }
+
   drawScene(gl: WebGL2RenderingContext, programInfo: any) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clearDepth(1.0)
@@ -221,12 +240,21 @@ export class SceneCanvasComponent implements OnInit {
     gl.uniform1f(programInfo.uniformLocations.height, gl.canvas.height)
     gl.uniform1f(programInfo.uniformLocations.c, this.c)
     gl.uniform1f(programInfo.uniformLocations.dt, this.dt)
-    gl.uniform2fv(programInfo.uniformLocations.positions, this.positions)
-    gl.uniform2fv(programInfo.uniformLocations.velocities, this.velocities)
-    gl.uniform2fv(programInfo.uniformLocations.accelerations, this.accelerations)
     gl.uniform1i(programInfo.uniformLocations.positionCount, this.positions.length / 2)
     gl.uniform1i(programInfo.uniformLocations.velocityCount, this.velocities.length / 2)
     gl.uniform1i(programInfo.uniformLocations.accelerationCount, this.accelerations.length / 2)
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures.positions);
+    gl.uniform1i(programInfo.uniformLocations.positions, 0);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures.velocities);
+    gl.uniform1i(programInfo.uniformLocations.velocities, 1);
+
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures.accelerations);
+    gl.uniform1i(programInfo.uniformLocations.accelerations, 2);
     {
       const numComponents = 2
       const type = gl.FLOAT
