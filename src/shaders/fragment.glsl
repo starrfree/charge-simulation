@@ -5,16 +5,16 @@ uniform float width;
 uniform float height;
 uniform float c;
 uniform float dt;
-uniform vec2 positions[330];
-uniform vec2 velocities[330];
-uniform vec2 accelerations[330];
+uniform vec2 positions[300];
+uniform vec2 velocities[300];
+uniform vec2 accelerations[300];
 uniform int positionCount;
 uniform int velocityCount;
 uniform int accelerationCount;
 
 out vec4 o_FragColor;
 
-const float q = -1.0;
+const float q = 1.0;
 uint hash(uint ste);
 float random(uint seed);
 vec3 hsv2rgb(vec3 c);
@@ -56,12 +56,14 @@ void main() {
 
   // vec3 color1 = vec3(1.0);
   // vec3 color2 = vec3(0.0);
+  // float t = clamp(log(length(E) + 1.0) / 4.0, 0.0, 1.0);
   // o_FragColor = vec4(t * color1  + (1.0 - t) * color2, 1.0);
-  // o_FragColor = vec4(hsv2rgb(vec3(atan(E.y, E.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
+
   float t = clamp(log(length(E) + 1.0) / 4.0, 0.0, 1.0);
   o_FragColor = vec4(hsv2rgb(vec3(-atan(E.y, E.x) / (2.0 * 3.1415) - 0.5, 1.0, t)), 1.0);
+
   // float t = clamp(log(length(poynting) + 1.0) / 5.0, 0.0, 1.0);
-  // o_FragColor = vec4(hsv2rgb(vec3(atan(poynting.x, poynting.y) / (2.0 * 3.1415), 1.0, t)), 1.0);
+  // o_FragColor = vec4(hsv2rgb(vec3(-atan(poynting.y, poynting.x) / (2.0 * 3.1415), 1.0, t)), 1.0);
 }
 
 uint hash(uint ste) {

@@ -39,7 +39,6 @@ export class SceneCanvasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var p = getPosition(Math.PI / 6, "cos(t)", "sin(t)")
   }
 
   ngAfterViewInit(): void {
