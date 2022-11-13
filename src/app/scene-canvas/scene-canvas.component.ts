@@ -124,6 +124,9 @@ export class SceneCanvasComponent implements OnInit {
       this.positions = []
       this.velocities = []
       this.accelerations = []
+      this.position = undefined
+      this.velocity = {x: 0, y: 0}
+      this.acceleration = {x: 0, y: 0}
       if (this.positions.length > 0) {
         this.drawScene(gl, programInfo)
       }
@@ -141,7 +144,9 @@ export class SceneCanvasComponent implements OnInit {
       this.positions = []
       this.velocities = []
       this.accelerations = []
-      resizeCanvas()
+      this.position = undefined
+      this.velocity = {x: 0, y: 0}
+      this.acceleration = {x: 0, y: 0}
     }
     this.parametersService.resetSimulation = reset
     window.addEventListener('keypress', (event) => {
@@ -166,15 +171,14 @@ export class SceneCanvasComponent implements OnInit {
       }
       t += this.dt
       if (this.position != undefined) {
-        var n = this.positions.length
-        if (n >= 2) {
-          var dx = this.position.x - this.positions[n - 2]
-          var dy = this.position.y - this.positions[n - 1]
+        if (this.positions.length >= 2) {
+          var dx = this.position.x - this.positions[this.positions.length - 2]
+          var dy = this.position.y - this.positions[this.positions.length - 1]
           this.velocity.x = dx / this.dt
           this.velocity.y = dy / this.dt
-          if (n >= 3) {
-            var dvx = this.velocity.x - this.velocities[n - 2]
-            var dvy = this.velocity.y - this.velocities[n - 1]
+          if (this.velocities.length >= 2) {
+            var dvx = this.velocity.x - this.velocities[this.velocities.length - 2]
+            var dvy = this.velocity.y - this.velocities[this.velocities.length - 1]
             this.acceleration.x = dvx / this.dt
             this.acceleration.y = dvy / this.dt
           }
