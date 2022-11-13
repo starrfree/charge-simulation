@@ -130,7 +130,7 @@
   background-color: rgba(100, 100, 100, 0.6);
   border: solid rgba(221, 221, 221, 0.6);
   border-radius: 5px;
-  width: 160px;
+  max-width: 160px;
   margin-left: 3px;
   transform: translateY(-2px);
   color: white;
@@ -153,4 +153,11 @@
 
 .checkbox:focus {
   outline: 0;
+}
+
+.code-link {
+  margin-left: 5px;
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.7;
 }

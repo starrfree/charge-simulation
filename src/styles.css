@@ -7,3 +7,12 @@ body {
   font-family: 'Quicksand', sans-serif;
   color: white;
 }
+
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+a:hover {
+  font-weight: bold;
+}
