@@ -5,5 +5,15 @@
   width: 100%;
   height: 100%;
   background-color: black;
-  image-rendering: pixelated;
+  /* image-rendering: pixelated; */
+}
+
+.cursor {
+  position: absolute;
+}
+
+.cursor img {
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, 50%);
 }

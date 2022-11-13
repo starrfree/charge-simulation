@@ -1,3 +1,6 @@
 <div class="container">
   <canvas #glCanvas class="gl-canvas"></canvas>
 </div>
+<div *ngIf="!isFullScreen" class="cursor" [style.left]="pointerIndicatorPosition.x" [style.bottom]="pointerIndicatorPosition.y">
+  <img src="assets/svg/xmark.svg" alt="cursor">
+</div>

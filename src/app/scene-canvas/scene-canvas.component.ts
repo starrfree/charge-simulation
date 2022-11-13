@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ParametersService } from '../parameters.service';
 import { ShaderService } from '../shader.service';
 
@@ -12,13 +12,20 @@ declare function getPosition(t: number, expressionX: string, expressionY: string
 export class SceneCanvasComponent implements OnInit {
   @ViewChild('glCanvas') public canvas!: ElementRef
   @Output() colorAtPointer = new EventEmitter<{r: number, g: number, b: number}>()
+  @Input() isFullScreen = false
   didInit: boolean = false
   buffers: any
   textures: any
 
   c = 2
-  dt = 1.0 / 60
+  dt = 1.0 / 50
   pointerPosition?: {x: number, y: number}
+  get pointerIndicatorPosition(): {x: string, y: string} {
+    return {
+      x: `${(this.pointerPosition?.x ?? -10) - 1}px`,
+      y: `${(this.pointerPosition?.y ?? -10) - 1}px`
+    }
+  }
 
   position?: {x: number, y: number}
   velocity: {x: number, y: number} =  {x: 0, y: 0}
@@ -189,7 +196,7 @@ export class SceneCanvasComponent implements OnInit {
         this.accelerations.push(this.acceleration.x)
         this.accelerations.push(this.acceleration.y)
         
-        while (this.positions.length > 1000) {
+        while (this.positions.length > 550) {
           this.positions.shift()
           this.velocities.shift()
           this.accelerations.shift()
