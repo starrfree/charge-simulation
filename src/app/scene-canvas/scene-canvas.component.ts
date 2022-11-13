@@ -112,6 +112,7 @@ export class SceneCanvasComponent implements OnInit {
         velocityCount: gl.getUniformLocation(shaderProgram, 'velocityCount'),
         accelerationCount: gl.getUniformLocation(shaderProgram, 'accelerationCount'),
         pointerPosition: gl.getUniformLocation(shaderProgram, 'pointerPosition'),
+        electric: gl.getUniformLocation(shaderProgram, 'electric'),
       },
       attribLocations: {
         vertexPosition: gl.getAttribLocation(shaderProgram, 'i_VertexPosition')
@@ -264,6 +265,7 @@ export class SceneCanvasComponent implements OnInit {
     gl.uniform1i(programInfo.uniformLocations.positionCount, this.positions.length / 2)
     gl.uniform1i(programInfo.uniformLocations.velocityCount, this.velocities.length / 2)
     gl.uniform1i(programInfo.uniformLocations.accelerationCount, this.accelerations.length / 2)
+    gl.uniform1i(programInfo.uniformLocations.electric, this.parametersService.parameters.field == 'electric' ? 1 : 0)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.textures.positions);

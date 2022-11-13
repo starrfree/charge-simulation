@@ -10,12 +10,12 @@
         <div class="radio-button-container">
           <span *ngFor="let preset of parametersService.possiblePresets" class="radio-button" (click)="setPreset(preset)">
             <img *ngIf="parametersService.parameters.preset != preset" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
-            <img *ngIf="parametersService.parameters.preset == preset" class="radio-mark" src="assets/svg/circle.circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.preset == preset" class="radio-mark" src="assets/svg/circle.circle.svg" alt="selected">
             <span>{{parametersService.getTitle(preset)}}</span>
           </span>
           <span class="radio-button" (click)="setPreset('custom')">
             <img *ngIf="parametersService.parameters.preset != 'custom'" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
-            <img *ngIf="parametersService.parameters.preset == 'custom'" class="radio-mark" src="assets/svg/circle.circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.preset == 'custom'" class="radio-mark" src="assets/svg/circle.circle.svg" alt="selected">
             <span>Custom</span>
           </span>
         </div>
@@ -40,6 +40,22 @@
           [ngModel]="parametersService.parameters.expressionY" [(ngModel)]="expressionY" (focusout)="setY()" (keydown.enter)="blur()"
           [disabled]="parametersService.parameters.preset != 'custom'"
           [style.opacity]="parametersService.parameters.preset == 'custom' ? 1 : 0.7">
+        </div>
+      </div>
+      <div class="section-divider"></div>
+      <div class="section">
+        <div class="medium-title">Field</div>
+        <div class="radio-button-container">
+          <span class="radio-button" (click)="parametersService.parameters.field = 'electric'; parametersService.setURL()">
+            <img *ngIf="parametersService.parameters.field != 'electric'" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.field == 'electric'" class="radio-mark" src="assets/svg/circle.circle.svg" alt="selected">
+            <span>Electric</span>
+          </span>
+          <span class="radio-button" (click)="parametersService.parameters.field = 'poynting'; parametersService.setURL()">
+            <img *ngIf="parametersService.parameters.field != 'poynting'" class="radio-mark" src="assets/svg/circle.svg" alt="not selected">
+            <img *ngIf="parametersService.parameters.field == 'poynting'" class="radio-mark" src="assets/svg/circle.circle.svg" alt="selected">
+            <span>Poynting</span>
+          </span>
         </div>
       </div>
       <div class="section-divider"></div>

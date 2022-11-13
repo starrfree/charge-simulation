@@ -12,7 +12,8 @@ export class ParametersService {
     preset: Preset,
     expressionX: string,
     expressionY: string,
-    showWheel: boolean
+    showWheel: boolean,
+    field: 'electric' | 'poynting'
   }
   possiblePresets: Preset[] = ['oscillation', 'oscillation and movement', 'circular']
   resetSimulation: () => void = () => {}
@@ -27,7 +28,8 @@ export class ParametersService {
       preset: 'oscillation and movement',
       expressionX: "",
       expressionY: "",
-      showWheel: true
+      showWheel: true,
+      field: 'electric'
     }
     this.getURL()
     this.preset(this.parameters.preset)
@@ -48,6 +50,9 @@ export class ParametersService {
       if (params['legend']) {
         this.parameters.showWheel = params['legend'] == 'true'
       }
+      if (params['field']) {
+        this.parameters.field = params['field']
+      }
       this.onURLChange()
     })
   }
@@ -57,7 +62,8 @@ export class ParametersService {
       customX: this.defaultCustomExpression.x,
       customY: this.defaultCustomExpression.y,
       mvmt: this.parameters.preset,
-      legend: this.parameters.showWheel
+      legend: this.parameters.showWheel,
+      field: this.parameters.field,
     }
     const url = this.router.createUrlTree([], {relativeTo: this.activatedRoute, queryParams: params}).toString()
     this.location.go(url);
