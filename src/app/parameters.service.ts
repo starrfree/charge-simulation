@@ -109,7 +109,7 @@ export class ParametersService {
     var r = 2.0 * hsv.v
     return {
       x: r * Math.cos(hsv.h * 2 * Math.PI),
-      y: -r * Math.sin(hsv.h * 2 * Math.PI)
+      y: r * Math.sin(hsv.h * 2 * Math.PI)
     }
   }
 

@@ -73,7 +73,7 @@ export class SceneCanvasComponent implements OnInit {
       }
     }
     this.pointerPosition.x = x
-    this.pointerPosition.y = y
+    this.pointerPosition.y = this.canvas.nativeElement.clientHeight - y
   }
 
   main() {
@@ -196,8 +196,6 @@ export class SceneCanvasComponent implements OnInit {
         }
 
         this.textures = this.initTextures(gl)
-
-        console.log(this.positions.length)
       }
       requestAnimationFrame(render)
       
