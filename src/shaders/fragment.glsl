@@ -28,21 +28,21 @@ void main() {
   vec3 E = vec3(0.0);
   vec3 B = vec3(0.0);
   for(int i = 0; i < positionCount - 1; i++) {
-    vec2 texID = vec2(i, 0) / float(positionCount);
-    vec2 nextTexID = vec2(i + 1, 0) / float(positionCount);
+    vec2 texID = (vec2(i, 0) + vec2(0.5)) / float(positionCount);
+    vec2 nextTexID = (vec2(i + 1, 0) + vec2(0.5)) / float(positionCount);
     float timeInterval = float(positionCount - 1 - i) * dt;
     float timeToReach = distance(position.xy, texture(positions, texID).rg) / c;
     float timeIntervalAfter = float(positionCount - 1 - (i + 1)) * dt;
-    float timeToReachAfter = distance(position.xy, texture(positions,nextTexID).rg) / c;
+    float timeToReachAfter = distance(position.xy, texture(positions, nextTexID).rg) / c;
     bool isBetween = timeInterval >= timeToReach && timeIntervalAfter < timeToReachAfter;
     float interpolation = (timeInterval - timeToReach) / (timeInterval - timeToReach + timeToReachAfter - timeIntervalAfter);
     if (isBetween) {
-      vec2 r0xy = texture(positions, texID).rg * (1.0 - interpolation) + texture(positions,nextTexID).rg * interpolation;
+      vec2 r0xy = texture(positions, texID).rg * (1.0 - interpolation) + texture(positions, nextTexID).rg * interpolation;
       vec3 r0 = vec3(r0xy.x, r0xy.y, 0.0);
       vec3 r = position - r0;
-      vec2 vxy = texture(velocities, texID).rg * (1.0 - interpolation) + texture(velocities,nextTexID).rg * interpolation;
+      vec2 vxy = texture(velocities, texID).rg * (1.0 - interpolation) + texture(velocities, nextTexID).rg * interpolation;
       vec3 v = vec3(vxy.x, vxy.y, 0.0);
-      vec2 axy = texture(accelerations, texID).rg * (1.0 - interpolation) + texture(accelerations,nextTexID).rg * interpolation;
+      vec2 axy = texture(accelerations, texID).rg * (1.0 - interpolation) + texture(accelerations, nextTexID).rg * interpolation;
       vec3 a = vec3(axy.x, axy.y, 0.0);
       float rMag = length(r);
       vec3 n = r / rMag;

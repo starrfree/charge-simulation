@@ -16,6 +16,7 @@ export class SceneCanvasComponent implements OnInit {
   didInit: boolean = false
   buffers: any
   textures: any
+  resolution: number = 1.0 / 2.3
 
   c = 2
   dt = 1.0 / 50
@@ -55,10 +56,10 @@ export class SceneCanvasComponent implements OnInit {
       this.main()
     })
 
-    window.addEventListener('pointermove', (event) => {
+    this.canvas.nativeElement.addEventListener('pointermove', (event: any) => {
       this.onMouseMove(event)
     })
-    window.addEventListener('pointerdown', (event) => {
+    this.canvas.nativeElement.addEventListener('pointerdown', (event: any) => {
       this.onMouseMove(event)
     })
   }
@@ -119,8 +120,8 @@ export class SceneCanvasComponent implements OnInit {
       }
     }
     const resizeCanvas = () => {
-      this.canvas.nativeElement.width = this.canvas.nativeElement.clientWidth
-      this.canvas.nativeElement.height = this.canvas.nativeElement.clientHeight
+      this.canvas.nativeElement.width = this.canvas.nativeElement.clientWidth * this.resolution
+      this.canvas.nativeElement.height = this.canvas.nativeElement.clientHeight * this.resolution
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
       this.positions = []
       this.velocities = []
@@ -162,9 +163,6 @@ export class SceneCanvasComponent implements OnInit {
       }
       time = new Date().getTime()
       
-      if (this.positions.length > 0) {
-        this.drawScene(gl, programInfo)
-      }
       var position = getPosition(t, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
       this.position = {
         x: position.x + this.center.x,
@@ -210,10 +208,13 @@ export class SceneCanvasComponent implements OnInit {
         this.textures = this.initTextures(gl)
       }
       requestAnimationFrame(render)
+      if (this.positions.length > 0) {
+        this.drawScene(gl, programInfo)
+      }
       
       if (this.pointerPosition) {
         const pixels = new Uint8Array(4)
-        gl.readPixels(this.pointerPosition.x, this.pointerPosition.y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+        gl.readPixels(this.pointerPosition.x * this.resolution, this.pointerPosition.y * this.resolution, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
         this.colorAtPointer.emit({
           r: pixels[0] / 255,
           g: pixels[1] / 255,

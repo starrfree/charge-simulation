@@ -10,6 +10,7 @@
 
 .cursor {
   position: absolute;
+  user-select: none;
 }
 
 .cursor img {
