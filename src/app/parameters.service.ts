@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-type Preset = 'oscillation' | 'oscillation and movement' | 'circular' | 'custom'
+type Preset = 'oscillation' | 'oscillation and movement' | 'circular' | 'follow' | 'custom'
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class ParametersService {
     showWheel: boolean,
     field: 'electric' | 'poynting'
   }
-  possiblePresets: Preset[] = ['oscillation', 'oscillation and movement', 'circular']
+  possiblePresets: Preset[] = ['oscillation', 'oscillation and movement', 'circular', 'follow']
   resetSimulation: () => void = () => {}
   onURLChange: () => void = () => {}
   defaultCustomExpression = {
@@ -100,6 +100,8 @@ export class ParametersService {
         return "Oscillating and moving"
       case 'circular':
         return "Circular motion"
+      case 'follow':
+        return "Follow mouse"
       default:
         return ""
     }

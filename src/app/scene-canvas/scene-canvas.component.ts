@@ -21,6 +21,7 @@ export class SceneCanvasComponent implements OnInit {
   c = 2
   dt = 1.0 / 50
   pointerPosition?: {x: number, y: number}
+  targetPointerPosition?: {x: number, y: number}
   get pointerIndicatorPosition(): {x: string, y: string} {
     return {
       x: `${(this.pointerPosition?.x ?? -10) - 1}px`,
@@ -62,6 +63,16 @@ export class SceneCanvasComponent implements OnInit {
     this.canvas.nativeElement.addEventListener('pointerdown', (event: any) => {
       this.onMouseMove(event)
     })
+    this.canvas.nativeElement.addEventListener('touchstart', (event: any) => {
+      event.preventDefault()
+      this.onMouseMove(event)
+      event.stopPropagation()
+    }, false)
+    this.canvas.nativeElement.addEventListener('touchmove', (event: any) => {
+      event.preventDefault()
+      this.onMouseMove(event)
+      event.stopPropagation()
+    }, false)
   }
 
   onMouseMove(event: any) {
@@ -74,14 +85,10 @@ export class SceneCanvasComponent implements OnInit {
       x = event.x
       y = event.y
     }
-    if (this.pointerPosition == undefined) {
-      this.pointerPosition = {
-        x: x,
-        y: y
-      }
-    }
-    this.pointerPosition.x = x
-    this.pointerPosition.y = this.canvas.nativeElement.clientHeight - y
+    if (this.pointerPosition == undefined) { this.pointerPosition = {x: x, y: y} }
+    if (this.targetPointerPosition == undefined) { this.targetPointerPosition = {x: x, y: y} }
+    this.targetPointerPosition.x = x
+    this.targetPointerPosition.y = this.canvas.nativeElement.clientHeight - y
   }
 
   main() {
@@ -162,12 +169,15 @@ export class SceneCanvasComponent implements OnInit {
         return;
       }
       time = new Date().getTime()
+
       
-      var position = getPosition(t, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
-      this.position = {
-        x: position.x + this.center.x,
-        y: position.y + this.center.y
+      if (this.pointerPosition != undefined && this.targetPointerPosition != undefined) {
+        let pointerSmooth = 10 * this.dt
+        this.pointerPosition.x = pointerSmooth * this.targetPointerPosition.x + (1 - pointerSmooth) * this.pointerPosition.x
+        this.pointerPosition.y = pointerSmooth * this.targetPointerPosition.y + (1 - pointerSmooth) * this.pointerPosition.y
       }
+      
+      this.position = this.getPosition(t)
       t += this.dt
       if (this.position != undefined) {
         if (this.positions.length >= 2) {
@@ -182,13 +192,6 @@ export class SceneCanvasComponent implements OnInit {
             this.acceleration.y = dvy / this.dt
           }
         }
-        // var dt = this.dt
-        // var positionDtM = getPosition(t - dt, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
-        // this.velocity.x = (position.x - positionDtM.x) / dt
-        // this.velocity.y = (position.y - positionDtM.y) / dt
-        // var positionDt = getPosition(t + dt, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
-        // this.acceleration.x = (positionDtM.x + positionDt.x - 2 * position.x) / (dt * dt)
-        // this.acceleration.y = (positionDtM.y + positionDt.y - 2 * position.y) / (dt * dt)
 
         this.positions.push(this.position.x)
         this.positions.push(this.position.y)
@@ -223,6 +226,49 @@ export class SceneCanvasComponent implements OnInit {
       }
     }
     render()
+  }
+
+  getPosition(t: number) {
+    if (this.parametersService.parameters.preset == 'follow') {
+      if (this.pointerPosition == undefined) {
+        return this.center
+      }
+      let lastPosition = this.positions.length >= 2 ? {
+        x: this.positions[this.positions.length - 2],
+        y: this.positions[this.positions.length - 1]
+      } : this.center
+      let size = Math.min(window.innerWidth, window.innerHeight)
+      let targetPosition = {
+        x: this.pointerPosition.x / size * 4,
+        y: this.pointerPosition.y / size * 4
+      }
+      let maxSpeed = 0.022
+      let dx = targetPosition.x - lastPosition.x
+      let dy = targetPosition.y - lastPosition.y
+      let distance = Math.sqrt(dx * dx + dy * dy)
+      let speed = distance
+      if (distance < 0.001) {
+        return lastPosition
+      }
+      let lastVelocity = this.velocities.length >= 2 ? {
+        x: this.velocities[this.velocities.length - 2],
+        y: this.velocities[this.velocities.length - 1]
+      } : {x: 0, y: 0}
+      let lastSpeed = Math.sqrt(lastVelocity.x * lastVelocity.x + lastVelocity.y * lastVelocity.y)
+      let speedSmooth = 0.01
+      speed = speedSmooth * speed + (1 - speedSmooth) * lastSpeed
+      speed = speed * (distance + 0.02)
+      speed = (1 - 1 / (speed * 20 + 1)) * maxSpeed
+      let x = lastPosition.x + speed * dx / distance
+      let y = lastPosition.y + speed * dy / distance
+      return {x: x, y: y}
+    }
+    var position = getPosition(t, this.parametersService.parameters.expressionX, this.parametersService.parameters.expressionY)
+    position = {
+      x: position.x + this.center.x,
+      y: position.y + this.center.y
+    }
+    return position
   }
 
   initBuffers(gl: WebGL2RenderingContext) {

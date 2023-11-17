@@ -62,7 +62,7 @@ export class ToolbarComponent implements OnInit {
   }
   
   getVector() {
-    return this.parametersService.getVector(this.colorAtPointer)
+    return this.parametersService.getVector(this.colorAtPointer) || {x: 0, y: 0}
   }
 
   blur() {

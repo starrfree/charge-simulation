@@ -6,6 +6,7 @@ body {
   margin: 0;
   font-family: 'Quicksand', sans-serif;
   color: white;
+  overflow: hidden;
 }
 
 a {
